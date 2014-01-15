@@ -1,5 +1,5 @@
 define [
-  'lib/lodash'
+  'swiss/extended_lodash'
 ], (_) ->
 
   { bind
