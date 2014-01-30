@@ -37,8 +37,11 @@ new EventSpaghetti();
 # Your new boilerplate
 class Better extends SuperEmitter
   event_table: [ 
-    [ $some_jquery        , [ [ 'click'       , [ task1, task2, task3           ] ] ] ],
-    [ 'non_jquery_emitter', [ [ 'server_event', [ event_is_valid, 'update_view' ] ] ] ]
+    [ $some_jquery        , [ [ 'click'       , [ task1,
+                                                  task2,
+                                                  task3          ] ] ] ]
+    [ 'non_jquery_emitter', [ [ 'server_event', [ event_is_valid,
+                                                  'update_view'  ] ] ] ]
   ]
 new Better().bind_events()
 ```
