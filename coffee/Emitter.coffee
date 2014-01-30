@@ -1,4 +1,4 @@
-wrapper = ->
+define ->
   class Emitter
     constructor: ->
       @handlers = {}
@@ -33,14 +33,14 @@ wrapper = ->
       return
    
     ###
-    Fires specified event with given arguments array.
+    Emits specified event with given arguments array.
     I chose the array form to visually separate event emissions
     from simple method calls.
     Beware that args array is not cloned.
     @param event_name {string}
     @param args {array}
     ###
-    fire: (event_name, args) ->
+    emit: (event_name, args) ->
       handlers = @handlers[event_name]
       if !handlers
         return
@@ -52,11 +52,3 @@ wrapper = ->
         if ((typeof res == 'boolean') && !res)
           return
       return
-
-
-# AMD loaders support
-if (('undefined' != typeof define) && define.amd)
-  (define wrapper)
-# CommonJS loaders support
-else if (('undefined' != typeof module) && module.exports)
-  module.exports = wrapper()

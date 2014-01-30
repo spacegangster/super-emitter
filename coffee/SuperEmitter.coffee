@@ -1,16 +1,16 @@
 define [
-  'core/Emitter'
-  'swiss/clj_fns'
+  './Emitter'
+  './functions'
 ], (Emitter, functions) ->
 
-  { contains
+  { bind
+    contains
     find_by_first_value_as_key
-    isArray
-    xmap
+    map
     partial
     remove_at
-    values
-    fastbind  } = functions
+    values } = functions
+
 
   make_action_undefined_exception = (action, emitter_name) ->
     new Error("ListeningError: action #{action} is undefined for #{emitter_name}")
@@ -23,7 +23,7 @@ define [
       for action in actions
         bound = ((typeof action == 'function') && action) ||  # action can be a simple function
           bounds[action] ||
-          bounds[action] = (fastbind this_arg[action], this_arg)
+          bounds[action] = (bind this_arg[action], this_arg)
 
         if (typeof action == 'string') && !this_arg[action]
           throw (make_action_undefined_exception)
@@ -69,8 +69,8 @@ define [
       this.self = this  # helps to bind events
       
     bind_events: ->
-      for [emitter, events] in (xmap @event_table, (partial to_emitter_row, this))
-        if (isArray emitter)
+      for [emitter, events] in (map (partial to_emitter_row, this), @event_table)
+        if Array.isArray(emitter)
           (mutate_list emitter, events, this)
 
           if (emitter.length)
@@ -92,6 +92,14 @@ define [
       listener_bounds = (values listener.__bounds__)
       for event_name, handler_bundle of @handlers
         for handler, handler_idx in handler_bundle by -1
-          if (contains listener_bounds, handler)
+          if (contains handler, listener_bounds)
             (remove_at handler_bundle, handler_idx)
       return
+
+  ###
+  Performs bindings of event handlers without instance binding.
+  All emitters should be objects not strings, and all actions must functions,
+  not the method names.
+  ###
+  SuperEmitter.activate_event_table = (table) ->
+  SuperEmitter

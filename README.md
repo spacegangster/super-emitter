@@ -1,6 +1,16 @@
-# SuperEmitter - declarative event binding by Ognivo.
-If you tired of event-binding spaghetti, this package is what you need.
-It offers simple declarative event binding syntax and event composition abilities.
+# SuperEmitter
+## Event emitting and hanling
+If you are writing your own GUI components, or you are just tired of 
+event-binding boilerplate, this package is what you need.
+Out of the box:
+  Declarative event binding syntax
+  Event handling inheritance
+  Event handling composition
+  Light-weight event emission (no built-in bubble/capture)
+
+### Reader prerequesites
+You know CoffeeScript, jQuery, and some things about standard DOM API.
+
 ### How it can change your life:
 ```javascript
 // ...

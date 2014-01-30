@@ -1,0 +1,56 @@
+#one,
+#two,
+#three,
+#four {
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  font: 30px sans;
+  line-height: 4em;
+  text-align: center;
+  vertical-align: middle;
+}
+#one {
+  top: 0;
+  left: 0;
+  background: #c66;
+  transition: all 0.5s ease-in-out;
+  color: #267326;
+}
+#one.hovered {
+  background: #ccb366;
+  color: #267360;
+}
+#two {
+  top: 0;
+  left: 50%;
+  background: #9c6;
+  transition: all 0.5s ease-in-out;
+  color: #264c73;
+}
+#two.hovered {
+  background: #66cc80;
+  color: #392673;
+}
+#three {
+  top: 50%;
+  left: 50%;
+  background: #6cc;
+  transition: all 0.5s ease-in-out;
+  color: #732673;
+}
+#three.hovered {
+  background: #667fcc;
+  color: #732639;
+}
+#four {
+  top: 50%;
+  left: 0;
+  background: #96c;
+  transition: all 0.5s ease-in-out;
+  color: #734d26;
+}
+#four.hovered {
+  background: #cc66b2;
+  color: #607326;
+}

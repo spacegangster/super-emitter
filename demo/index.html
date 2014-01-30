@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      Events without noise
+    </title>
+    <link rel='stylesheet' type='text/css' href='index.css'>
+    <script src='jquery.js'></script>
+    <script src='require.js'></script>
+  </head>
+  <body>
+    <div id='one'></div>
+    <div id='two'></div>
+    <div id='three'></div>
+    <div id='four'></div>
+    <script>
+      require.config({
+        paths: {
+          lib: '../lib',
+          'lib/jquery': 'jquery'
+        }
+      });
+      require(['./app']);
+    </script>
+  </body>
+</html>

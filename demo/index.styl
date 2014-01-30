@@ -1,0 +1,47 @@
+hue-base = 0
+hue-delta = 90
+
+#one,
+#two,
+#three,
+#four
+  position: absolute
+  width: 50%
+  height: 50%
+
+  font: 30px sans
+
+  line-height: 4em
+  text-align: center
+  vertical-align: middle
+
+programmatical-hover(delta-multiplier)
+  hue-modified = hue-base + hue-delta * delta-multiplier
+  hue-modified-hovered = hue-modified + hue-delta / 2
+  background: hsl(hue-modified, 50, 60)
+  transition: all .5s ease-in-out
+  color: hsl(hue-modified + 120, 50, 30)
+
+  &.hovered
+    background: hsl(hue-modified-hovered, 50, 60)
+    color: hsl(hue-modified-hovered + 120, 50, 30)
+
+#one
+  top: 0
+  left: 0
+  programmatical-hover(0)
+
+#two
+  top: 0
+  left: 50%
+  programmatical-hover(1)
+
+#three
+  top: 50%
+  left: 50%
+  programmatical-hover(2)
+
+#four
+  top: 50%
+  left: 0
+  programmatical-hover(3)
