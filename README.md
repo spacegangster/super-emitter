@@ -12,12 +12,14 @@ Out of the box:
 You know CoffeeScript and jQuery.
 
 ### Code weirds
-I use different bracketing to separate method calls from function calls: 
-  obj.method()
-  (function1 (function2 arg1), arg2)
-
-I don't use brackets on methods, if I pass anonymous multiline functions.
-
+```coffeescript
+# I use different bracketing to separate method calls from function calls: 
+obj.method()
+(function1 (function2 arg1), arg2)
+# I don't use brackets on methods, if I pass anonymous multiline functions.
+$jquery_element.on 'click', (e) ->
+  console.log('wow')
+```
 ## How it can change your life:
 ```coffeescript
 # Your old boilerplate to bind handlers to events:
@@ -49,10 +51,10 @@ new Better().bind_events()
 Clone the repo, open demo/index.html in browser, move your mouse,
 click on blocks, look at console output.
 
-Read the demo/app.coffee it is very short.
+Read the demo/app.coffee it's very short.
 
 Ask me.
 
 
 ## License
-MIT
+### MIT
