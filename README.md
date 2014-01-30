@@ -9,7 +9,7 @@ Out of the box:
   Light-weight event emission (no built-in bubble/capture)
 
 ### Reader prerequesites
-You know CoffeeScript, jQuery, and some things about standard DOM API.
+You know CoffeeScript and jQuery.
 
 ### Code weirds
 I use different bracketing to separate method calls from function calls: 
@@ -49,3 +49,7 @@ click on blocks, look at console output.
 Read the demo/app.coffee it is very short.
 
 Ask me.
+
+
+## License
+MIT
