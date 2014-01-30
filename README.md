@@ -1,5 +1,5 @@
 # SuperEmitter
-## Event emitting and handling
+## Event handling and binding
 If you are writing your own GUI components, or you are just tired of 
 event-binding boilerplate, this package is what you need.
 Out of the box:
