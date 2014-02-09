@@ -55,6 +55,30 @@ Read the demo/app.coffee it's very short.
 
 Ask me.
 
+## Docs
+Create emitter class, describe its emitters, events and reactions
+in `event_table` format:
+```coffeescript
+# [ [ emitter_name, [ [ event_name, [ reactions... ] ] ] ] ]
+# let me show it trough simple composition
+# I will write a class descibing a brain of an ancient human.
+# It has some methods and should be able to handle various events.
+
+class Brain extends SuperEmitter
+  # methods:
+  emit_adrenaline: ->
+  emit_cortisol: ->
+  emit_dopamine: ->
+  emit_endorphins: ->
+  look_around: ->
+
+ear_events = [ [ 'snake_heard'     , watch_outs     ] ]
+eye_events = [ [ 'food_spotted'    , hunt_reactions ]
+               [ 'predator_spotted', flee_reactions ] ]
+
+
+Brain::event_table = [ ear_events, eye_events, nose_events ]
+```
 
 ## License
 ### MIT

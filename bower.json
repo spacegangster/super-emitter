@@ -1,0 +1,16 @@
+{
+  "name"        : "super-emitter"
+, "description" : "Declarative event binding library"
+, "version"     : "1.0.1"
+, "main"        : "./lib/SuperEmitter"
+, "authors"     : [ "Ivan Fedorov <sharp.maestro@gmail.com>" ]
+
+, "keywords"    : [ "event"
+                  , "declarative"
+                  , "event emitter" ]
+
+, "repository"  : { "type" : "git"
+                  , "url"  : "https://github.com/ognivo/super-emitter" }
+
+, "license"     : "MIT"
+}
