@@ -3,10 +3,10 @@
 If you are writing your own GUI components, or you are just tired of 
 event-binding boilerplate, this package is what you need.
 Out of the box:
-  Declarative event binding
-  Event handling inheritance
-  Event handling composition
-  Light-weight event emission (no built-in bubble/capture)
+- Declarative event binding
+- Event handling inheritance
+- Event handling composition
+- Light-weight event emission (no built-in bubble/capture)
 
 ### Reader prerequesites
 You know CoffeeScript and jQuery.
@@ -56,28 +56,90 @@ Read the demo/app.coffee it's very short.
 Ask me.
 
 ## Docs
+### Binding events
 Create emitter class, describe its emitters, events and reactions
 in `event_table` format:
 ```coffeescript
 # [ [ emitter_name, [ [ event_name, [ reactions... ] ] ] ] ]
 # let me show it trough simple composition
-# I will write a class descibing a brain of an ancient human.
-# It has some methods and should be able to handle various events.
+# I will write a class descibing a brain of an ancient human,
+# That should be able to handle various events.
 
 class Brain extends SuperEmitter
+  # Events
+  event_table: [
+    [ 'ear' , [ [ 'snake_heard'     , [ 'emit_adrenaline'
+                                        'look_around'        ] ] ] ]
+    [ 'eye' , [ [ 'food_spotted'    , [ 'emit_noradrenaline'
+                                        'hunt'
+                                        'emit_endorphins'    ] ]
+                [ 'predator_spotted', [ 'emit_cortisol'
+                                        'emit_adrenaline'
+                                        'run'                ] ] ] ]
+    [ 'nose', [ [ 'food_smelled'    , [ 'look_around'        ] ]
+                [ 'blood_smelled'   , [ 'emit_adrenaline'
+                                        'look_around'        ] ] ] ]
+  ]
+
+  # constructor and instance members
+  constructor = ->
+    @ear  = new Ear()
+    @eye  = new Eye()
+    @nose = new Nose()
+
+
   # methods:
   emit_adrenaline: ->
   emit_cortisol: ->
-  emit_dopamine: ->
   emit_endorphins: ->
+  hunt: ->
   look_around: ->
 
-ear_events = [ [ 'snake_heard'     , watch_outs     ] ]
-eye_events = [ [ 'food_spotted'    , hunt_reactions ]
-               [ 'predator_spotted', flee_reactions ] ]
+# The event table can be decomposed as following
+flee_reactions = [ 'emit_cortisol', 'emit_adrenaline', 'run' ]
+hunt_reactions = [ 'emit_noradrenaline', 'hunt', 'emit_endorphins' ]
+seek_reactions = [ 'look_around' ]
+watch_outs     = [ 'emit_adrenaline', 'look_around' ]
 
+ear_events  = [ [ 'snake_heard'     , watch_outs     ] ]
+eye_events  = [ [ 'food_spotted'    , hunt_reactions ]
+                [ 'predator_spotted', flee_reactions ] ]
+nose_events = [ [ 'food_smelled'    , seek_reactions
+                  'blood_smelled'   , watch_outs     ] ]
 
-Brain::event_table = [ ear_events, eye_events, nose_events ]
+ear_pack  = [ 'ear' , ear_events  ]
+eye_pack  = [ 'eye' , eye_events  ]
+nose_pack = [ 'nose', nose_events ]
+
+Brain::event_table = [ ear_pack, eye_pack, nose_pack ]
+
+```
+
+### Emitting events
+```coffeescript
+# Use in a method
+Class Brain extends SuperEmitter
+  # ... event table and stuff ...
+  # simplest form
+  emit_adrenaline: ->
+    @emit('adrenaline')
+
+  # or with arguments
+  emit_adrenaline: (dose_ml = 0.02, delay_ms = 500, noradrenaline = false) ->
+    @emit('adrenaline', [dose_ml, delay_ms, noradrenaline])
+    # square brackets used to denote arguments from event name
+```
+
+### Receiving events
+```coffeescript
+Class Brain extends SuperEmitter
+  # the ones called without args
+  receive_adrenaline: ->
+    console.log arguments.length # -> 0
+
+  # the ones called with args
+  receive_adrenaline: (dose_ml, delay_ms, noradrenaline) ->
+    console.log arguments
 ```
 
 ## License
