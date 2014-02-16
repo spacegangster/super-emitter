@@ -3,17 +3,17 @@
 If you are writing your own GUI components, or you are just tired of 
 event-binding boilerplate, this package is what you need.
 Out of the box:
-- Declarative event binding
+- Declarative event binding, with concise format, very clear
+about event source, name and its handlers
+- Event handling logic is now a data structure (!!), not code
 - Event handling inheritance
 - Event handling composition
-- Light-weight event emission (no built-in bubble/capture)
-
-### Reader prerequesites
-You know CoffeeScript and jQuery.
+- Light-weight event emission (no built-in bubble/capture),
+but with arguments
 
 ### Code weirds
 ```coffeescript
-# I use different bracketing to separate method calls from function calls: 
+# I use different parentheses styles to separate method calls from function calls: 
 obj.method()
 (function1 (function2 arg1), arg2)
 # I don't use brackets on methods, if I pass anonymous multiline functions.
@@ -37,7 +37,7 @@ class EventSpaghetti
 new EventSpaghetti();
 
 # Your new boilerplate
-class Better extends SuperEmitter
+class Component extends SuperEmitter
   event_table: [ 
     [ $some_jquery        , [ [ 'click'       , [ task1,
                                                   task2,
@@ -45,7 +45,7 @@ class Better extends SuperEmitter
     [ 'non_jquery_emitter', [ [ 'server_event', [ event_is_valid,
                                                   'update_view'  ] ] ] ]
   ]
-new Better().bind_events()
+new Component().bind_events()
 ```
 ## Demo
 Clone the repo, open demo/index.html in browser, move your mouse,
@@ -118,7 +118,7 @@ Brain::event_table = [ ear_pack, eye_pack, nose_pack ]
 ### Emitting events
 ```coffeescript
 # Use in a method
-Class Brain extends SuperEmitter
+class Brain extends SuperEmitter
   # ... event table and stuff ...
   # simplest form
   emit_adrenaline: ->
@@ -132,7 +132,7 @@ Class Brain extends SuperEmitter
 
 ### Receiving events
 ```coffeescript
-Class Brain extends SuperEmitter
+class Brain extends SuperEmitter
   # the ones called without args
   receive_adrenaline: ->
     console.log arguments.length # -> 0
@@ -140,6 +140,31 @@ Class Brain extends SuperEmitter
   # the ones called with args
   receive_adrenaline: (dose_ml, delay_ms, noradrenaline) ->
     console.log arguments
+```
+
+### Event handling is data now
+And you can do with it anything you can do with data. Equality,
+cloning and merging.
+
+### Merging event tables
+There is a `class_tools` module, which contains `merge_events`
+function. It is a pure function merges two or more event tables 
+into one. New items will be added, repeating ones will be 
+removed.
+
+```coffeescript
+table1 = [ [ 'nose', [ [ 'smell-cheese', [ 'look_around' ] ] ] ]
+           [ 'eye' , [ [ 'sought-food' , [ 'grab_item'   ] ] ] ] ]
+
+table2 = [ [ 'nose', [ [ 'smell-cheese', [ 'search_food' ] ] ] ]
+           [ 'eye' , [ [ 'sought-food' , [ 'grab_item'
+                                           'chew_item'   ] ] ] ] ]
+
+(class_tools.merge_events table1, table2) # -> will produce:
+[ [ 'nose', [ [ 'smell-cheese', [ 'look_around'
+                                  'search_food' ] ] ] ]
+  [ 'eye' , [ [ 'sought-food' , [ 'grab_item'
+                                  'chew_item'   ] ] ] ] ]
 ```
 
 ## License
