@@ -26,15 +26,13 @@ define [
           bounds[action] = (bind this_arg[action], this_arg)
 
         if (typeof action == 'string') && !this_arg[action]
-          throw (make_action_undefined_exception)
-
-        emitter.on(event, bound)
+          throw (make_action_undefined_exception action, emitter) emitter.on(event, bound)
     return
 
   mutate_list = (list, events, this_arg) ->
-    { push
-      splice
-      unshift } = list
+    old_push   = list.push
+    old_splice = list.splice
+    old_unshift = list.unshift
 
     list.splice = ->
       i = arguments.length
