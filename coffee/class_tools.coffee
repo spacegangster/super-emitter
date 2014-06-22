@@ -1,6 +1,8 @@
 define [
   './functions'
-], (functions) ->
+], (
+  functions
+) ->
 
   { indexOf
     multicall

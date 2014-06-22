@@ -1,7 +1,10 @@
 define [
   './Emitter'
   './functions'
-], (Emitter, functions) ->
+], (
+  Emitter
+, functions
+) ->
 
   { bind
     contains
