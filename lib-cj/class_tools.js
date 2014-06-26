@@ -95,7 +95,6 @@ mix_of = function() {
 };
 
 ({
-  merge_blueprints: merge_blueprints,
   merge_events: merge_event_tables,
   merge_event_tables: merge_event_tables,
   merge_partial_initializers: merge_partial_initializers,
