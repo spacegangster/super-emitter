@@ -1,12 +1,16 @@
-functions = require "./functions"
+fn = require "vendor/f-empower"
 
-{ indexOf
+{ clonedeep
+  map
   multicall
-  pluck
-  union } = functions
+  union } = fn
+
+delete_key_from_collection = (key, collection) ->
+  idx_of_key = (index_of_key_in_collection  key, collection)
+  collection.splice(idx_of_key, 1)  if idx_of_key != -1
 
 index_of_key_in_collection = (key, collection) ->
-  (indexOf  (pluck collection,'0'), key)
+  (fn.index_of key, (map '0', collection))
 
 name_isnt_reserved = (member_name) ->
   !(member_name in ['blueprint', 'event_table'])
@@ -15,8 +19,20 @@ to_objects_array = (mixins) ->
   for mixin_entry in mixins
     (('function' is typeof mixin_entry) && mixin_entry.prototype) || mixin_entry
 
+merge_blueprints = (blueprints...) ->
+  blueprints = (clonedeep blueprints)
+  resulting_blueprint = blueprints.shift()
+  
+  for source_blueprint in blueprints
+    for row in source_blueprint
+      [ part_name, part_conf ] = row
+      delete_key_from_collection(part_name, resulting_blueprint)
+      resulting_blueprint.push(row)
+  
+  resulting_blueprint
+
 merge_partial_initializers = (mixins) ->
-  (multicall (pluck mixins, 'partial_init'))
+  (multicall (map 'partial_init', mixins))
 
 merge_event_tables = (tables...) ->
   resulting_table = []
@@ -57,10 +73,11 @@ mix_of = (Base, mixins...) ->
       mix_proto[member_name] = member
 
   mixins.unshift(Base.prototype)
-  Mixed::partial_init = (merge_partial_initializers mixins)
+  Mixed::partial_init = merge_partial_initializers( mixins )
   Mixed
 
 {
+  merge_blueprints
   merge_events: merge_event_tables
   merge_event_tables
   merge_partial_initializers
