@@ -1,22 +1,32 @@
 define [
   './Emitter'
-  './functions'
+  'vendor/f-empower'
 ], (
   Emitter
-, functions
+, fn
 ) ->
 
-  { bind
-    contains
-    find_by_first_value_as_key
-    map
-    partial
-    remove_at
-    values } = functions
+  a_get = (hash_array, row_name) ->
+    for row in hash_array
+      if row[0] == row_name
+        return row[1]
+    return
 
+  { a_contains
+  , bind
+  , is_array
+  , is_function
+  , map
+  , partial
+  , remove_at
+  , vals } = fn
 
   make_action_undefined_exception = (action, emitter_name) ->
     new Error("ListeningError: action #{action} is undefined for #{emitter_name}")
+
+  #  emitter_listeners = [
+  #    [ emitter, [ [ listener, [ [ listened_event, [ reactions ] ] ] ] ] ]
+  #  ]
 
   listen = (emitter, event_table, this_arg) ->
     return  if !emitter
@@ -24,17 +34,19 @@ define [
     bounds = this_arg.__bounds__
     for [event, actions] in event_table
       for action in actions
-        bound = ((typeof action == 'function') && action) ||  # action can be a simple function
+        bound = ((typeof action == 'function') && action) ||  # reaction can be a simple function
           bounds[action] ||
           bounds[action] = (bind this_arg[action], this_arg)
-
+        #
         if (typeof action == 'string') && !this_arg[action]
-          throw (make_action_undefined_exception action, emitter) emitter.on(event, bound)
+          throw (make_action_undefined_exception action, emitter)
+        else
+          emitter.on(event, bound)
     return
 
   mutate_list = (list, events, this_arg) ->
-    old_push   = list.push
-    old_splice = list.splice
+    old_push    = list.push
+    old_splice  = list.splice
     old_unshift = list.unshift
 
     list.splice = ->
@@ -57,11 +69,8 @@ define [
   to_emitter_row = (this_arg, [ emitter_name, events ]) ->
     if ('string' != typeof emitter_name)
       [ emitter_name, events ]
-    else if emitter_name.indexOf(':') == -1
-      [ this_arg[emitter_name], events ]
     else
-      [ jElement_name, find_selector ] = emitter_name.split(':')
-      [ this_arg[jElement_name].find(find_selector), events ]
+      [ this_arg[emitter_name], events ]
 
   class SuperEmitter extends Emitter
     constructor: ->
@@ -70,8 +79,11 @@ define [
       this.self = this  # helps to bind events
       
     bind_events: ->
+      if !@event_table
+        throw new Error('SuperEmitter/bind_events: `event_table` not found')
+      #
       for [emitter, events] in (map (partial to_emitter_row, this), @event_table)
-        if Array.isArray(emitter)
+        if (is_array emitter)
           (mutate_list emitter, events, this)
 
           if (emitter.length)
@@ -83,18 +95,27 @@ define [
       0
 
     listen: (emitter_name, emitter) ->
-      (listen emitter, (find_by_first_value_as_key @event_table, emitter_name), this)
+      (listen emitter, (a_get @event_table, emitter_name), this)
       emitter
 
     # This removes all reactions of the listener from the handlers hash.
     # @param listener, (an object with @__bounds__ hash, that is filled 
     # with functions).
     remove_listener: (listener) ->
-      listener_bounds = (values listener.__bounds__)
+      listener_bounds = (vals listener.__bounds__)
       for event_name, handler_bundle of @handlers
         for handler, handler_idx in handler_bundle by -1
-          if (contains handler, listener_bounds)
-            (remove_at handler_bundle, handler_idx)
+          if (a_contains listener_bounds, handler)
+            (remove_at handler_idx, handler_bundle)
+      return
+
+    unlisten: (emitter_name, emitter) ->
+      event_table = (a_get @event_table, emitter_name)
+      bounds = @__bounds__
+      for [event_name, events] in event_table
+        for reaction in events
+          reaction = (is_function reaction) && reaction || bounds[reaction]
+          emitter.off(event_name, reaction)
       return
 
   ###
