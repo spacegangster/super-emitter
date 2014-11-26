@@ -80,10 +80,8 @@ define [
     Mixed::partial_init = merge_partial_initializers( mixins )
     Mixed
 
-  {
-    merge_blueprints
-    merge_events: merge_event_tables
-    merge_event_tables
-    merge_partial_initializers
-    mix_of
-  }
+  { merge_blueprints
+  , merge_events: merge_event_tables
+  , merge_event_tables
+  , merge_partial_initializers
+  , mix_of }

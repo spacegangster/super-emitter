@@ -41,7 +41,10 @@ define [
         if (typeof action == 'string') && !this_arg[action]
           throw (make_action_undefined_exception action, emitter)
         else
-          emitter.on(event, bound)
+          if emitter.on
+            emitter.on(event, bound)
+          else
+            emitter.addEventListener(event, bound)
     return
 
   mutate_list = (list, events, this_arg) ->
