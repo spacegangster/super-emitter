@@ -52,3 +52,7 @@ define ->
         if ((typeof res == 'boolean') && !res)
           return
       return
+
+    # special method, that prevents following handlers from being executed
+    ___: ->
+      false
