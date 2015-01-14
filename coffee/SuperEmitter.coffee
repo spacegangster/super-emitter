@@ -1,9 +1,7 @@
 define [
-  './Emitter'
   'vendor/f-empower'
 ], (
-  Emitter
-, fn
+  fn
 ) ->
 
   a_get = (hash_array, row_name) ->
@@ -30,7 +28,7 @@ define [
 
   listen = (emitter, event_table, this_arg) ->
     return  if !emitter
-
+    #
     bounds = this_arg.__bounds__
     for [event, actions] in event_table
       for action in actions
@@ -51,23 +49,23 @@ define [
     old_push    = list.push
     old_splice  = list.splice
     old_unshift = list.unshift
-
+    #
     list.splice = ->
       i = arguments.length
       while --i > 1
         (listen arguments[i], events, this_arg)
       old_splice.apply(list, arguments)
-
+    #
     list.push = ->
       for emitter in arguments
         (listen emitter, events, this_arg)
       old_push.apply(list, arguments)
-
+    #
     list.unshift = ->
       for emitter in arguments
         (listen emitter, events, this_arg)
       old_unshift.apply(list, arguments)
-    0
+    return
 
   to_emitter_row = (this_arg, [ emitter_name, events ]) ->
     if ('string' != typeof emitter_name)
@@ -75,11 +73,12 @@ define [
     else
       [ this_arg[emitter_name], events ]
 
-  class SuperEmitter extends Emitter
+
+  class SuperEmitter
     constructor: ->
-      super()
-      this.__bounds__ = {}
-      this.self = this  # helps to bind events
+      @handlers   = {}
+      @__bounds__ = {}
+      @self       = this  # helps to bind events
       
     bind_events: ->
       if !@event_table
@@ -97,9 +96,59 @@ define [
           (listen emitter, events, this)
       0
 
+    ###
+    Emits specified event with given arguments array.
+    I chose the array form to visually separate event emissions
+    from simple method calls.
+    Beware that args array is not cloned.
+    @param event_name {string}
+    @param args {array}
+    ###
+    emit: (event_name, args) ->
+      handlers = @handlers[event_name]
+      if !handlers
+        return
+      #
+      i = -1
+      res = null
+      while ++i < hlen = handlers.length
+        res = handlers[i].apply(this, args)
+        if ((typeof res == 'boolean') && !res)
+          return
+      return
+
     listen: (emitter_name, emitter) ->
       (listen emitter, (a_get @event_table, emitter_name), this)
       emitter
+
+    ###
+    Unbinds events.
+    By default function removes all handlers from all events.
+    @param {string} event_name if specified, removes handlers of only that event.
+    @param {function} handler if specified, unbinds only that one handler.
+    ###
+    off: (event_name, handler) ->
+      if !event_name
+        for event_name, event_handlers of @handlers
+          event_handlers.length = 0
+      else if !handler
+        @handlers[event_name].length = 0
+      else
+        event_handlers = @handlers[event_name]
+        i = event_handlers.length
+        while --i >=0
+          if event_handlers[i] == handler
+            event_handlers.splice(i, 1)
+      return
+
+    ###
+    Binds handler to the specified event
+    ###
+    on: (event_name, handler) ->
+      handlers = @handlers
+      handlers[event_name] = handlers[event_name] || []
+      handlers[event_name].push(handler)
+      return
 
     # This removes all reactions of the listener from the handlers hash.
     # @param listener, (an object with @__bounds__ hash, that is filled 
@@ -120,6 +169,10 @@ define [
           reaction = (is_function reaction) && reaction || bounds[reaction]
           emitter.off(event_name, reaction)
       return
+
+    # special method, that prevents following handlers from being executed
+    ___: ->
+      false
 
   ###
   Performs bindings of event handlers without instance binding.
