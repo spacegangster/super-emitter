@@ -7,12 +7,16 @@ a_get = (hash_array, row_name) ->
   return
 
 { a_contains
+, a_each
 , bind
+, each
 , is_array
 , is_function
+, first
 , map
 , partial
 , remove_at
+, second
 , vals } = fn
 
 make_action_undefined_exception = (action, emitter_name) ->
@@ -70,6 +74,25 @@ to_emitter_row = (this_arg, [ emitter_name, events ]) ->
     [ this_arg[emitter_name], events ]
 
 
+_unlisten_component = (listener, component, events) ->
+  bounds = listener.__bounds__
+  a_each events, ([event_name, event_handlers_names]) ->
+    a_each event_handlers_names, (handler_name) ->
+      bounded_handler = bounds[handler_name]
+      component.off(event_name, bounded_handler)
+
+
+unlisten_components = (listener, components_with_events) ->
+  a_each components_with_events, ([component, events]) ->
+    if (is_array component)
+      components_array = component
+      (a_each components_array, (component) ->
+        (_unlisten_component listener, component, events))
+    else
+      (_unlisten_component listener, component, events)
+
+
+
 class SuperEmitter
   constructor: ->
     @handlers   = {}
@@ -90,7 +113,19 @@ class SuperEmitter
 
       else
         (listen emitter, events, this)
-    0
+    return
+
+  # removes own handlers from every listened component
+  dispose: ->
+    components_with_events = @get_components_listened()
+    (unlisten_components this, components_with_events)
+    @off()
+
+  get_components_listened: ->
+    component_names   = (map first, @event_table)
+    components        = (map this, component_names)
+    components_events = (map second, @event_table)
+    (map Array, components, components_events)
 
   ###
   Emits specified event with given arguments array.
@@ -124,17 +159,22 @@ class SuperEmitter
   @param {function} handler if specified, unbinds only that one handler.
   ###
   off: (event_name, handler) ->
-    if !event_name
+    if event_name
+      event_handlers = @handlers[event_name]
+      if !event_handlers
+        throw new Error("No handlers bound for event #{event_name}")
+      #
+      if !handler
+        event_handlers.length = 0
+      else
+        i = event_handlers.length
+        while --i >=0
+          if event_handlers[i] == handler
+            event_handlers.splice(i, 1)
+    else
+      # remove all handlers from all events
       for event_name, event_handlers of @handlers
         event_handlers.length = 0
-    else if !handler
-      @handlers[event_name].length = 0
-    else
-      event_handlers = @handlers[event_name]
-      i = event_handlers.length
-      while --i >=0
-        if event_handlers[i] == handler
-          event_handlers.splice(i, 1)
     return
 
   ###
