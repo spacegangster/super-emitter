@@ -6,6 +6,7 @@ define [
 
   { a_contains
   , a_each
+  , a_filter
   , bind
   , each
   , is_array
@@ -159,7 +160,14 @@ define [
       component_names   = (map first, @event_table)
       components        = (map this, component_names)
       components_events = (map second, @event_table)
-      (map Array, components, components_events)
+      components_with_events = (map Array, components, components_events)
+      #
+      # Убрать оттуда нуллы, которые получаются когда компонент
+      # ещё/уже не прописан в данном экземпляре.
+      a_filter components_with_events, (cmp_evt_pack) ->
+        !!cmp_evt_pack[0]
+
+
 
     # Emits specified event with given arguments array.
     # I chose the array form to visually separate event emissions
@@ -233,8 +241,10 @@ define [
       event_table = (a_get @event_table, emitter_name)
       return  if !event_table
       #
-      emitter = emitter || this[emitter_name]
-      (unlisten_component this, emitter, event_table)
+      if emitter = emitter || this[emitter_name]
+        (unlisten_component this, emitter, event_table)
+      else
+        console.warn "SuperEmitter.unlisten: no emitter##{emitter_name}"
       return
 
     # special method, that prevents following handlers from being executed
