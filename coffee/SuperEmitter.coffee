@@ -140,7 +140,7 @@ define [
     bind_events: ->
       if !@event_table
         console.warn(
-          "SuperEmitter/bind_events: `event_table` not found #{@constructor.name}"
+          "#{@constructor.name}/bind_events: `event_table` not found"
         )
         return
         # throw new Error('SuperEmitter/bind_events: `event_table` not found')
@@ -186,14 +186,14 @@ define [
       handlers = (slice handlers)
       while ++i < len
         res = handlers[i].apply(this, args)
-        if ((typeof res == 'boolean') && !res)
+        if false == res
           return
       return
 
     listen: (emitter_name, emitter) ->
       if !@event_table
         console.warn(
-          "SuperEmitter/listen #{emitter_name}: `event_table` not found #{@constructor.name}"
+          "#{@constructor.name}/listen #{emitter_name}: `event_table` not found"
         )
         return
         # throw new Error('SuperEmitter/bind_events: `event_table` not found')
@@ -244,9 +244,13 @@ define [
       if emitter = emitter || this[emitter_name]
         (unlisten_component this, emitter, event_table)
       else
-        console.warn "SuperEmitter.unlisten: no emitter##{emitter_name}"
+        console.warn "#{@constructor.name}.unlisten: no emitter##{emitter_name}"
       return
 
-    # special method, that prevents following handlers from being executed
+    # Спец метод. Возврат false останавливает выполнение последующих
+    # обработчиков.
+    # Осторожно! В случае если у источника события несколько подписчиков
+    # их обработчики тоже не исполнятся.
     ___: ->
+      console.info "#{@constructor.name}.___ canceling event"
       false
