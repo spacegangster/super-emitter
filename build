@@ -3,9 +3,7 @@
 rm -r coffee-cj
 mkdir coffee-cj
 
-fella -o coffee-cj/functions.coffee    coffee/functions.coffee
 fella -o coffee-cj/class_tools.coffee  coffee/class_tools.coffee
-fella -o coffee-cj/Emitter.coffee      coffee/Emitter.coffee
 fella -o coffee-cj/SuperEmitter.coffee coffee/SuperEmitter.coffee
 
 coffee -o lib/ -cb coffee

@@ -137,6 +137,7 @@ define [
       (unlisten_component listener, component, events)
 
 
+  hasProp = {}.hasOwnProperty
 
   class SuperEmitter
     constructor: ->
@@ -148,6 +149,32 @@ define [
     @transform_events: ctools.transform_events
     @merge_events: ctools.merge_events
     @merge_mixin: ctools.merge_mixin
+
+    @extend: (descendant_members) ->
+      extend = (child, parent, more_members) ->
+        hasProp = {}.hasOwnProperty
+        ctor = ->
+          @constructor = child
+          return
+        #
+        for key of parent
+          if hasProp.call(parent, key)
+            child[key] = parent[key]
+        #
+        ctor.prototype = parent.prototype
+        child.prototype = new ctor()
+        fn.assign(child.prototype, more_members)
+        child.__super__ = parent.prototype
+        child.prototype.__super__ = parent.prototype
+        child
+
+      true_contructor = descendant_members.constructor || ->
+        true_contructor.__super__.constructor.apply(this, arguments)
+
+      delete descendant_members.constructor
+
+      (extend true_contructor, this, descendant_members)
+
 
 
     # MEMBER
