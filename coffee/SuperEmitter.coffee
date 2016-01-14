@@ -1,7 +1,9 @@
 define [
   'vendor/f-empower'
+  './class_tools'
 ], (
   fn
+  ctools
 ) ->
 
   { a_contains
@@ -114,7 +116,12 @@ define [
           (is_function handler_name) &&
             handler_name ||
             bounds[handler_name]
-        component.off(event_name, bounded_handler)
+        if component.off
+          component.off(event_name, bounded_handler)
+        else if component.removeEventListener
+          component.removeEventListener(event_name, bounded_handler)
+        else
+          console.log "vendor/SuperEmitter._unlisten_component: component is not a listener", component
 
   unlisten_component = (listener, component, events) ->
     if (is_array component)
@@ -136,7 +143,14 @@ define [
       @handlers   = {}
       @__bounds__ = {}
       @self       = this  # helps to bind events
-      
+
+    # STATIC
+    @transform_events: ctools.transform_events
+    @merge_events: ctools.merge_events
+    @merge_mixin: ctools.merge_mixin
+
+
+    # MEMBER
     bind_events: ->
       if !@event_table
         console.warn(
