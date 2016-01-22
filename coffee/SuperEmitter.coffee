@@ -152,11 +152,11 @@ define [
 
     @extend: (descendant_members) ->
       extend = (child, parent, more_members) ->
-        hasProp = {}.hasOwnProperty
         ctor = ->
           @constructor = child
           return
         #
+        hasProp = {}.hasOwnProperty
         for key of parent
           if hasProp.call(parent, key)
             child[key] = parent[key]
