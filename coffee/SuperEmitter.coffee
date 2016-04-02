@@ -39,7 +39,7 @@ define [
     new Error("ListeningError: action #{action} is undefined for #{emitter_name}")
 
   #  emitter_listeners = [
-  #    [ emitter, [ [ listener, [ [ listened_event, [ reactions ] ] ] ] ] ]
+  #    [ emitter, [ listener, [ listened_event, [ reactions ] ] ] ]
   #  ]
 
 
