@@ -1,20 +1,26 @@
 {
-  "name"        : "super-emitter"
-, "description" : "Declarative event binding library"
-, "version"     : "3.3.0"
-, "main"        : "./lib/SuperEmitter"
-, "authors"     : [ "Ivan Fedorov <sharp.maestro@gmail.com>" ]
-
-, "keywords"    : [ "event"
-                  , "declarative"
-                  , "event emitter" ]
-
-, "repository"  : { "type" : "git"
-                  , "url"  : "https://github.com/ognivo/super-emitter" }
-
-, "scripts"     : { "prepublish" : "./build" }
-
-, "devDependencies": { "fella": "1.x.x" }
-
-, "license"     : "MIT"
+          "name": "super-emitter",
+          "description": "Declarative event binding library",
+          "version": "3.3.0",
+          "main": "./lib/SuperEmitter",
+          "authors": [
+                    "Ivan Fedorov <sharp.maestro@gmail.com>"
+          ],
+          "keywords": [
+                    "event",
+                    "declarative",
+                    "event emitter"
+          ],
+          "repository": {
+                    "type": "git",
+                    "url": "https://github.com/ognivo/super-emitter"
+          },
+          "scripts": {
+                    "prepublish": "./build"
+          },
+          "devDependencies": {
+                    "cjfella": "^1.0.3",
+                    "coffee-script": "^1.12.4"
+          },
+          "license": "MIT"
 }

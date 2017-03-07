@@ -3,8 +3,8 @@
 rm -r coffee-cj
 mkdir coffee-cj
 
-fella -o coffee-cj/class_tools.coffee  coffee/class_tools.coffee
-fella -o coffee-cj/SuperEmitter.coffee coffee/SuperEmitter.coffee
+node_modules/.bin/coffee node_modules/cjfella/main.coffee -o coffee-cj/class_tools.coffee  coffee/class_tools.coffee
+node_modules/.bin/coffee node_modules/cjfella/main.coffee -o coffee-cj/SuperEmitter.coffee coffee/SuperEmitter.coffee
 
-coffee -o lib/ -cb coffee
-coffee -o lib-cj/ -cb coffee-cj
+node_modules/.bin/coffee -o lib/ -cb coffee
+node_modules/.bin/coffee -o lib-cj/ -cb coffee-cj

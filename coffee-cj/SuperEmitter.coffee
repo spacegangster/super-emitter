@@ -34,7 +34,7 @@ make_action_undefined_exception = (action, emitter_name) ->
   new Error("ListeningError: action #{action} is undefined for #{emitter_name}")
 
 #  emitter_listeners = [
-#    [ emitter, [ [ listener, [ [ listened_event, [ reactions ] ] ] ] ] ]
+#    [ emitter, [ listener, [ listened_event, [ reactions ] ] ] ]
 #  ]
 
 
@@ -147,11 +147,11 @@ class SuperEmitter
 
   @extend: (descendant_members) ->
     extend = (child, parent, more_members) ->
-      hasProp = {}.hasOwnProperty
       ctor = ->
         @constructor = child
         return
       #
+      hasProp = {}.hasOwnProperty
       for key of parent
         if hasProp.call(parent, key)
           child[key] = parent[key]
